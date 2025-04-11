@@ -5,6 +5,7 @@
   },
   "extends": ["airbnb-base", "plugin:jest/recommended", "plugin:security/recommended", "plugin:prettier/recommended"],
   "plugins": ["jest", "security", "prettier"],
+  "ignorePatterns": ["node_modules", "bin"],
   "parserOptions": {
     "ecmaVersion": 2018
   },

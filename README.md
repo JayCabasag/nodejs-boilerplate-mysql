@@ -241,14 +241,14 @@ The app has a utility ApiError class to which you can attach a response code and
 For example, if you are trying to get a user from the DB who is not found, and you want to send a 404 error, the code should look something like:
 
 ```javascript
-const httpStatus = require('http-status');
+const { status } = require('http-status');
 const ApiError = require('../utils/ApiError');
 const User = require('../models/User');
 
 const getUser = async (userId) => {
   const user = await User.findById(userId);
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+    throw new ApiError(status.NOT_FOUND, 'User not found');
   }
 };
 ```
@@ -355,7 +355,7 @@ const userSchema = mongoose.Schema(
   {
     /* schema definition here */
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 userSchema.plugin(toJSON);
