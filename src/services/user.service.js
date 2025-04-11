@@ -1,6 +1,7 @@
 const { status } = require('http-status');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
+const bcrypt = require('bcryptjs');
 
 /**
  * Create a user
@@ -11,7 +12,9 @@ const createUser = async (userBody) => {
   if (await User.isEmailTaken(userBody.email)) {
     throw new ApiError(status.BAD_REQUEST, 'Email already taken');
   }
-  return User.createUser(userBody);
+  userBody.password = await bcrypt.hash(userBody.password, 8);
+  const userId = await User.create(userBody);
+  return User.getById(userId);
 };
 
 /**
@@ -43,7 +46,7 @@ const getUserById = async (id) => {
  * @returns {Promise<User>}
  */
 const getUserByEmail = async (email) => {
-  return User.findOne({ email });
+  return User.getByEmail(email);
 };
 
 /**
@@ -79,6 +82,15 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
+/**
+ * Check user password match
+ * @param {User} user
+ * @param {string} password
+ */
+const isPasswordMatch = async (user, password) => {
+  return await bcrypt.compare(password, user.password);
+};
+
 module.exports = {
   createUser,
   queryUsers,
@@ -86,4 +98,5 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  isPasswordMatch,
 };

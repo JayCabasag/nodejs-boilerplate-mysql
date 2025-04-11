@@ -1,7 +1,7 @@
 const db = require('../config/db');
 const paginate = require('../utils/sql');
 
-exports.createUser = async ({ name, email, password, role = 'user' }) => {
+exports.create = async ({ name, email, password, role = 'user' }) => {
   const [result] = await db.execute(`INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)`, [
     name,
     email,
@@ -11,12 +11,12 @@ exports.createUser = async ({ name, email, password, role = 'user' }) => {
   return result.insertId;
 };
 
-exports.getUserByEmail = async (email) => {
+exports.getByEmail = async (email) => {
   const [rows] = await db.execute(`SELECT * FROM users WHERE email = ?`, [email]);
   return rows[0];
 };
 
-exports.getUserById = async (id) => {
+exports.getById = async (id) => {
   const [rows] = await db.execute(`SELECT * FROM users WHERE id = ?`, [id]);
   return rows[0];
 };
@@ -29,7 +29,7 @@ exports.isEmailTaken = async (email, excludeUserId = null) => {
   return rows.length > 0;
 };
 
-exports.updateUserById = async (id, updateData) => {
+exports.updateById = async (id, updateData) => {
   const fields = Object.keys(updateData);
   const values = Object.values(updateData);
 
