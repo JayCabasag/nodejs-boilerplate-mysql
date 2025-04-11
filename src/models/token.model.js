@@ -9,11 +9,24 @@ exports.create = async ({ token, userId, type, expires, blacklisted = false }) =
   return result.insertId;
 };
 
-exports.getByToken = async (token, type) => {
+exports.getByToken = async (token) => {
+  const [rows] = await db.execute(`SELECT * FROM tokens WHERE token = ? AND blacklisted = false`, [token]);
+  return rows[0];
+};
+
+exports.getByTokenAndType = async (token, type) => {
   const [rows] = await db.execute(`SELECT * FROM tokens WHERE token = ? AND type = ? AND blacklisted = false`, [
     token,
     type,
   ]);
+  return rows[0];
+};
+
+exports.getByTokenAndTypeAndUserId = async (token, type, userId) => {
+  const [rows] = await db.execute(
+    `SELECT * FROM tokens WHERE token = ? AND type = ? AND user_id = ? AND blacklisted = false`,
+    [token, type, userId],
+  );
   return rows[0];
 };
 

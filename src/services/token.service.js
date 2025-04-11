@@ -46,6 +46,19 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
 };
 
 /**
+ * Delete user by id
+ * @param {ObjectId} userId
+ * @returns {Promise<User>}
+ */
+const deleteToken = async (token) => {
+  const tokenDoc = await Token.getByToken(token);
+  if (!tokenDoc) {
+    throw new ApiError(status.NOT_FOUND, 'Token not found');
+  }
+  await Token.deleteByToken(token);
+};
+
+/**
  * Verify token and return token doc (or throw an error if it is not valid)
  * @param {string} token
  * @param {string} type
@@ -53,7 +66,7 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
  */
 const verifyToken = async (token, type) => {
   const payload = jwt.verify(token, config.jwt.secret);
-  const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false });
+  const tokenDoc = await Token.getByTokenAndTypeAndUserId(token, type, payload.sub);
   if (!tokenDoc) {
     throw new Error('Token not found');
   }
@@ -116,6 +129,7 @@ const generateVerifyEmailToken = async (user) => {
 module.exports = {
   generateToken,
   saveToken,
+  deleteToken,
   verifyToken,
   generateAuthTokens,
   generateResetPasswordToken,
