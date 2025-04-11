@@ -14,7 +14,9 @@ const createUser = async (userBody) => {
   }
   userBody.password = await bcrypt.hash(userBody.password, 8);
   const userId = await User.create(userBody);
-  return User.getById(userId);
+  const user = await User.getById(userId);
+  delete user.password;
+  return user;
 };
 
 /**
